@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Model Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Placement Predictor</h1>
+        <form id="predictionForm">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+            </select>
+
+            <label for="ssc_p">SSC Percentage:</label>
+            <input type="number" id="ssc_p" name="ssc_p" step="0.01" required>
+
+            <label for="hsc_p">HSC Percentage:</label>
+            <input type="number" id="hsc_p" name="hsc_p" step="0.01" required>
+
+            <label for="degree_p">Degree Percentage:</label>
+            <input type="number" id="degree_p" name="degree_p" step="0.01" required>
+
+            <label for="etest_p">E-Test Percentage:</label>
+            <input type="number" id="etest_p" name="etest_p" step="0.01" required>
+
+            <label for="mba_p">MBA Percentage:</label>
+            <input type="number" id="mba_p" name="mba_p" step="0.01" required>
+
+            <label for="ssc_b">SSC Board:</label>
+            <select id="ssc_b" name="ssc_b">
+                <option value="0">Central</option>
+                <option value="1">Others</option>
+            </select>
+
+            <label for="hsc_b">HSC Board:</label>
+            <select id="hsc_b" name="hsc_b">
+                <option value="0">Central</option>
+                <option value="1">Others</option>
+            </select>
+
+            <label for="hsc_s">HSC Stream:</label>
+            <select id="hsc_s" name="hsc_s">
+                <option value="0">Arts</option>
+                <option value="1">Commerce</option>
+                <option value="2">Science</option>
+            </select>
+
+            <label for="degree_t">Degree Type:</label>
+            <select id="degree_t" name="degree_t">
+                <option value="0">Comm&Mgmt</option>
+                <option value="1">Others</option>
+                <option value="2">Sci&Tech</option>
+            </select>
+
+            <label for="workex">Work Experience:</label>
+            <select id="workex" name="workex">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+
+            <label for="specialisation">Specialisation:</label>
+            <select id="specialisation" name="specialisation">
+                <option value="0">Mkt&HR</option>
+                <option value="1">Mkt&Fin</option>
+            </select>
+
+            <button class="btn" type="submit">Predict</button>
+        </form>
+
+        <div id="results" class="results">
+            <h2>Results:</h2>
+            <div id="rfResult">Random Forest: </div>
+            <div id="svmResult">SVM: </div>
+            <div id="logRegResult">Logistic Regression: </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById('rfResult').textContent = `Random Forest: ${result['Random Forest']}`;
+            document.getElementById('svmResult').textContent = `SVM: ${result['SVM']}`;
+            document.getElementById('logRegResult').textContent = `Logistic Regression: ${result['Logistic Regression']}`;
+        });
+    </script>
+</body>
+</html>
